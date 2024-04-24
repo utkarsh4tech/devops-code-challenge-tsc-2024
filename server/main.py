@@ -12,6 +12,7 @@ app = FastAPI(root_path='/api/', version="0.3.0")
 
 origins = [
     # Add other origins here if needed
+    "http://localhost:5000"
 ]
 
 # Configure CORS middleware
