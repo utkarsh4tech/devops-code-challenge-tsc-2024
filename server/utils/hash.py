@@ -28,5 +28,5 @@ def verify_password(password: str, hash_to_compare: str):
     """
     hashed_password = hash_password(password)
     print('hased_password = ', hashed_password)
-    print('password = ', password)
+    # print('password = ', password) # Not a good practice to log passwords directly unhashed
     return hashed_password == hash_to_compare

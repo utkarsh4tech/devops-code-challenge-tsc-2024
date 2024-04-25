@@ -2,9 +2,9 @@ import base64
 import hmac
 import json
 from datetime import datetime, timedelta
-
+import os
 # TO DO move in .env file
-SECRET_KEY = "MIICXAIBAAKBgQCI7C7JVxC3ZI6fEkjmB/ZulI4AdCjO0eoQOy9g07gCTWJ"
+SECRET_KEY = os.environ['SECRET_KEY'] #"MIICXAIBAAKBgQCI7C7JVxC3ZI6fEkjmB/ZulI4AdCjO0eoQOy9g07gCTWJ"
 
 def encode(sub: str, exp: int):
   """Encode a subject in a JWT token
