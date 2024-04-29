@@ -12,7 +12,6 @@ app = FastAPI(root_path='/api/', version="0.3.0")
 
 origins = [
     # Add other origins here if needed
-    "http://localhost:5000", #for local testing, wont be available after reverse proxy
     "http://localhost:8080"  #reverse proxy 
 ]
 

@@ -22,6 +22,7 @@ export default defineConfig(({mode}) => {
         server: {
             host: true,
             port: process.env.CERN_RESTAURANT_CLIENT_PORT,
+            hmr: true,
         },
         test: {
             environment: 'jsdom'
