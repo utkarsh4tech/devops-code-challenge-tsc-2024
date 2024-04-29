@@ -1,0 +1,89 @@
+default:
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+  
+stages:
+  - test
+  - build
+
+frontend_test:
+  image: node:21-alpine
+  extends: .rules_template
+  stage: test
+  before_script:
+    - cd client
+  script:
+    - npm install
+    - npm run test
+
+
+backend_test:
+  image:  python:3.10.11-slim
+  extends: .rules_template
+  stage: test
+  script:
+    - pip install -r requirements.txt
+    - cd server
+    - python -m pytest
+
+
+frontend_build:
+  stage: build  
+  variables:
+    IMAGE_NAME: frontend_test
+    DOCKERFILE_PATH: client
+  extends: 
+    - .before_script_docker_login
+    - .docker_push
+    - .rules_template
+
+
+backend_build:
+  stage: build
+  variables:
+    IMAGE_NAME: backend_test
+    DOCKERFILE_PATH: .
+  extends:  
+    - .before_script_docker_login
+    - .docker_push
+    - .rules_template
+
+
+
+example_manual_build_except_main:
+  stage: build
+  script:
+    - echo " This is '$CI_COMMIT_BRANCH', with description '$CI_COMMIT_BRANCH'"
+    - echo "----- TRIGGERED MANUALY ONLY -----"
+  except:
+    - main
+  when: manual
+
+example_automatic_build_except_main:
+  stage: build
+  script:
+    - echo " This is '$CI_COMMIT_BRANCH', with description '$CI_COMMIT_BRANCH'"
+    - echo "----- TRIGGERED AUTOMATICALLY -----"
+  except:
+    - main
+  when: always
+
+.before_script_docker_login:
+  before_script:
+    - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+    - echo "LOGIN Sucessful!"
+    - cd $DOCKERFILE_PATH
+
+.docker_push:
+  script:
+      - docker build -t $DOCKER_USER/$IMAGE_NAME .
+      - echo "BUILD Sucessful!"
+      - docker push $DOCKER_USER/$IMAGE_NAME
+      - echo "PUSH Sucessful!"
+
+.rules_template:
+  rules:
+      - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+        when: always
+      - when: manual
