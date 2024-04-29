@@ -3,7 +3,7 @@ services:
   server:
     container_name: backend
     restart: always
-    image: utkarsh4tech/cern_tsc_server:v2
+    image: utkarsh4tech/cern_tsc_server:v3
     expose:
       - "8000"
     environment:
@@ -79,4 +79,3 @@ services:
 networks:
   my-network:
     driver: bridge
-
