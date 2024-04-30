@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+
+kind: Deployment
+
+metadata:
+  name: backend
+  namespace: cern
+  labels:
+    app: backend
+    tier: logical
+
+spec:
+  # replicas: 2  # No. of replica of this Deployment we want
+  selector:
+    matchLabels:
+      app: backend
+  strategy:
+    type: Recreate
+  # strategy:   
+  #   type: RollingUpdate
+  #   rollingUpdate:
+  #     maxSurge: 1
+  #     maxUnavailable: 25%
+  template:
+    metadata:
+      labels:
+        app: backend
+        tier: logical
+
+    spec:
+      containers:
+        - name: k8s-server
+          image: utkarsh4tech/cern_tsc_server:v3
+
+          env:
+
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: server-secret
+                  key: SECRET_KEY
+
+            - name: DB_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: server-secret
+                  key: DB_DATABASE
+
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: server-secret
+                  key: DB_PASSWORD
+
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: server-secret
+                  key: DB_USERNAME
+
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: DB_HOST
+
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: DB_PORT
+
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: "300m"
+
+          ports:
+            - containerPort: 8000
+              protocol: TCP
+
+          

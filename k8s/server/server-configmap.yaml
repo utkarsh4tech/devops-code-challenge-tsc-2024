@@ -1,0 +1,11 @@
+apiVersion: v1
+
+kind: ConfigMap
+
+metadata:
+  name: backend-config
+  namespace: cern
+
+data:
+  DB_HOST: "postgresql-svc"
+  DB_PORT: "5432"

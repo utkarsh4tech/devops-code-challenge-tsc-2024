@@ -1,0 +1,39 @@
+apiVersion: networking.k8s.io/v1
+
+kind: Ingress
+
+metadata:
+  name: cern-restaurant-ingress
+  namespace: cern
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    
+spec:
+  tls:
+  - hosts:
+      - "new.random.domain.com"
+    secretName: ing-secret-tls
+
+  rules:
+      - host: "new.random.domain.com"  # in /etc/host or purchase domain 
+        http:
+          paths:
+
+          # Revrse Proxy for FrontEnd
+          - path: /client/
+            pathType: Prefix  
+            backend:
+              service:
+                name: frontend-svc
+                port: 
+                  number: 5000
+
+          # Reverse Proxy for BackEnd   
+          - path: /api/
+            pathType: Prefix  
+            backend:
+              service:
+                name: backend-svc
+                port: 
+                  number: 8000
+

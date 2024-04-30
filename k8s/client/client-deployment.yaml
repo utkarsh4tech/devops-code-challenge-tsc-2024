@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+
+kind: Deployment
+
+metadata:
+  name: frontend
+  namespace: cern
+  labels:
+    app: frontend
+    tier: presentation
+
+spec:
+  selector:
+    matchLabels:
+      app: frontend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: frontend
+        tier: presentation
+
+    spec:
+      containers:
+        - name: k8s-client
+          image: utkarsh4tech/cern_tsc_client:v3
+
+          env:
+
+            - name: CERN_RESTAURANT_CLIENT_PREFIX
+              valueFrom:
+                configMapKeyRef:
+                  name: frontend-config
+                  key: CERN_RESTAURANT_CLIENT_PREFIX
+
+            - name: CERN_RESTAURANT_CLIENT_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: frontend-config
+                  key: CERN_RESTAURANT_CLIENT_PORT
+
+            - name: VITE_BACKEND_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: frontend-config
+                  key: VITE_BACKEND_URL
+
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: "200m"
+
+          ports:
+            - containerPort: 5000                
+              protocol: TCP
+
+          
